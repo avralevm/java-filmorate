@@ -120,7 +120,7 @@ class UserControllerTest {
 
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 		String responseBody = responseError.getBody();
-		assertEquals("{\"email\":\"не должно равняться null\"}", responseBody);
+		assertEquals("{\"email\":\"Электронная почта не может быть null\"}", responseBody);
 	}
 
 	@Test

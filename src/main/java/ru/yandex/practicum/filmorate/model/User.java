@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class User {
     private long id;
-    @NotNull
+    @NotNull(message = "Электронная почта не может быть null")
     @Email(message = "Электронная почта не может быть пустой и должна содержать символ @")
     private String email;
     @NotBlank(message = "Логин не может быть пустым и содержать пробелы")
