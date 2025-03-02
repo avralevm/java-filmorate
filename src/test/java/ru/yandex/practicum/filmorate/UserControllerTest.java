@@ -114,7 +114,7 @@ class UserControllerTest {
 		String responseBody = responseErrorSpace.getBody();
 		assertNotNull(responseBody);
 		System.out.println(responseBody);
-		assertTrue(responseBody.contains("\"login\":\"Логин не может быть пустым и содержать пробелы \""));
+		assertTrue(responseBody.contains("\"login\":\"Логин не может быть пустым и содержать пробелы\""));
 		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
 		assertTrue(responseBody.contains("\"status\":400"));
 		assertTrue(responseBody.contains("\"timestamp\":"));
