@@ -93,7 +93,11 @@ class UserControllerTest {
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 
 		String responseBody = responseError.getBody();
-		assertEquals("{\"login\":\"Логин не может быть пустым и содержать пробелы\"}", responseBody);
+		assertNotNull(responseBody);
+		assertTrue(responseBody.contains("\"login\":\"Логин не может быть пустым\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 
 	@Test
@@ -104,10 +108,15 @@ class UserControllerTest {
 				.name("Nick Name")
 				.birthday(LocalDate.of(1946, 8, 20)).build();
 		ResponseEntity<String> responseErrorSpace = restTemplate.postForEntity("/users", userLoginSpace, String.class);
-
 		assertThat(responseErrorSpace.getStatusCode()).isEqualTo(BAD_REQUEST);
+
 		String responseBody = responseErrorSpace.getBody();
-		assertEquals("{\"errorMessage\":\"Логин не может быть пустым и содержать пробелы\"}", responseBody);
+		assertNotNull(responseBody);
+		System.out.println(responseBody);
+		assertTrue(responseBody.contains("\"login\":\"Логин не может содержать пробелы\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 
 	@Test
@@ -117,10 +126,14 @@ class UserControllerTest {
 				.name("Nick Name")
 				.birthday(LocalDate.of(1946, 8, 20)).build();
 		ResponseEntity<String> responseError = restTemplate.postForEntity("/users", userWithoutEmail, String.class);
-
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
+
 		String responseBody = responseError.getBody();
-		assertEquals("{\"email\":\"Электронная почта не может быть null\"}", responseBody);
+		assertNotNull(responseBody);
+		assertTrue(responseBody.contains("\"email\":\"Электронная почта не может быть null\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 
 	@Test
@@ -129,12 +142,16 @@ class UserControllerTest {
 				.email("   ")
 				.login("dolore")
 				.name("Nick Name")
-				.birthday(LocalDate.of(1946,8,20)).build();
+				.birthday(LocalDate.of(1946, 8, 20)).build();
 		ResponseEntity<String> responseError = restTemplate.postForEntity("/users", userEmailSpace, String.class);
-
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
+
 		String responseBody = responseError.getBody();
-		assertEquals("{\"email\":\"Электронная почта не может быть пустой и должна содержать символ @\"}", responseBody);
+		assertNotNull(responseBody);
+		assertTrue(responseBody.contains("\"email\":\"Электронная почта не может быть пустой и должна содержать символ @\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 
 	@Test
@@ -143,12 +160,16 @@ class UserControllerTest {
 				.email("mail$mail.ru")
 				.login("dolore")
 				.name("Nick Name")
-				.birthday(LocalDate.of(1946,8,20)).build();
+				.birthday(LocalDate.of(1946, 8, 20)).build();
 		ResponseEntity<String> responseError = restTemplate.postForEntity("/users", userEmail, String.class);
-
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
+
 		String responseBody = responseError.getBody();
-		assertEquals("{\"email\":\"Электронная почта не может быть пустой и должна содержать символ @\"}", responseBody);
+		assertNotNull(responseBody);
+		assertTrue(responseBody.contains("\"email\":\"Электронная почта не может быть пустой и должна содержать символ @\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 
 	@Test
@@ -157,11 +178,15 @@ class UserControllerTest {
 				.email("mail@mail.ru")
 				.login("dolore")
 				.name("Nick Name")
-				.birthday(LocalDate.of(2030,8,20)).build();
+				.birthday(LocalDate.of(2030, 8, 20)).build();
 		ResponseEntity<String> responseError = restTemplate.postForEntity("/users", userBirthdayInFuture, String.class);
-
 		assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
+
 		String responseBody = responseError.getBody();
-		assertEquals("{\"birthday\":\"Дата рождения не может быть в будущем\"}", responseBody);
+		assertNotNull(responseBody);
+		assertTrue(responseBody.contains("\"birthday\":\"Дата рождения не может быть в будущем\""));
+		assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+		assertTrue(responseBody.contains("\"status\":400"));
+		assertTrue(responseBody.contains("\"timestamp\":"));
 	}
 }

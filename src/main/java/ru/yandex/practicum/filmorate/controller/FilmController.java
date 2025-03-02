@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validators.Validators;
 
 import java.util.*;
 
@@ -17,13 +16,8 @@ public class FilmController {
     Map<Long, Film> films = new HashMap<>();
     private long countID = 0;
 
-    private long getNextID() {
-        return ++countID;
-    }
-
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        Validators.validationFilm(film);
         film.setId(getNextID());
         films.put(film.getId(), film);
         log.info("[POST] Создан фильм c ID: {}. Название: {}", film.getId(), film.getName());
@@ -38,7 +32,6 @@ public class FilmController {
         if (!films.containsKey(updateFilm.getId())) {
             throw new NotFoundException("Фильм с id = " + updateFilm.getId() + " не найден");
         }
-        Validators.validationFilm(updateFilm);
 
         log.info("[PUT] Обновлены данные фильма c ID: {}. Название: {}", updateFilm.getId(), updateFilm.getName());
         films.put(updateFilm.getId(), updateFilm);
@@ -48,5 +41,9 @@ public class FilmController {
     @GetMapping
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
+    }
+
+    private long getNextID() {
+        return ++countID;
     }
 }

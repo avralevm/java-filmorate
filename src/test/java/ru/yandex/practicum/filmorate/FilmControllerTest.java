@@ -15,8 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
@@ -98,7 +97,11 @@ public class FilmControllerTest {
         assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 
         String responseBody = responseError.getBody();
-        assertEquals("{\"name\":\"Название фильма не может быть пустым\"}", responseBody);
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("\"name\":\"Название фильма не может быть пустым\""));
+        assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+        assertTrue(responseBody.contains("\"status\":400"));
+        assertTrue(responseBody.contains("\"timestamp\":"));
     }
 
     @Test
@@ -108,14 +111,18 @@ public class FilmControllerTest {
                 .description("Пятеро друзей (комик-группа «Шарло»), приезжают в город Бризуль." +
                         " Здесь они хотят разыскать господина Огюста Куглова, который задолжал им деньги, а именно 20 миллионов." +
                         " о Куглов, который за время «своего отсутствия», стал кандидатом Коломбани.")
-                .releaseDate(LocalDate.of(1967,3,25))
+                .releaseDate(LocalDate.of(1967, 3, 25))
                 .duration(100)
                 .build();
         ResponseEntity<String> responseError = restTemplate.postForEntity("/films", film, String.class);
         assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 
         String responseBody = responseError.getBody();
-        assertEquals("{\"description\":\"Максимальная длина описания — 200 символов\"}", responseBody);
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("\"description\":\"Максимальная длина описания — 200 символов\""));
+        assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+        assertTrue(responseBody.contains("\"status\":400"));
+        assertTrue(responseBody.contains("\"timestamp\":"));
     }
 
     @Test
@@ -123,14 +130,18 @@ public class FilmControllerTest {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
-                .releaseDate(LocalDate.of(1800,3,25))
+                .releaseDate(LocalDate.of(1800, 3, 25))
                 .duration(100)
                 .build();
         ResponseEntity<String> responseError = restTemplate.postForEntity("/films", film, String.class);
         assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 
         String responseBody = responseError.getBody();
-        assertEquals("{\"errorMessage\":\"Дата релиза не должна быть раньше 1895-12-28\"}", responseBody);
+        assertNotNull(responseBody);
+        assertTrue(responseBody.contains("\"releaseDate\":\"Дата релиза не должна быть раньше 1895-12-28\""));
+        assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+        assertTrue(responseBody.contains("\"status\":400"));
+        assertTrue(responseBody.contains("\"timestamp\":"));
     }
 
     @Test
@@ -138,13 +149,18 @@ public class FilmControllerTest {
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
-                .releaseDate(LocalDate.of(1800,3,25))
+                .releaseDate(LocalDate.of(1800, 3, 25))
                 .duration(-1)
                 .build();
         ResponseEntity<String> responseError = restTemplate.postForEntity("/films", film, String.class);
         assertThat(responseError.getStatusCode()).isEqualTo(BAD_REQUEST);
 
         String responseBody = responseError.getBody();
-        assertEquals("{\"duration\":\"Длительность должна быть больше 0\"}", responseBody);
+        assertNotNull(responseBody);
+
+        assertTrue(responseBody.contains("\"duration\":\"Длительность должна быть больше 0\""));
+        assertTrue(responseBody.contains("\"error\":\"Validation Error\""));
+        assertTrue(responseBody.contains("\"status\":400"));
+        assertTrue(responseBody.contains("\"timestamp\":"));
     }
 }

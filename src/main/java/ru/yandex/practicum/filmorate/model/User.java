@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import lombok.Data;
+import ru.yandex.practicum.filmorate.annotation.NoSpace;
 
 import java.time.LocalDate;
 
@@ -16,7 +17,8 @@ public class User {
     @NotNull(message = "Электронная почта не может быть null")
     @Email(message = "Электронная почта не может быть пустой и должна содержать символ @")
     private String email;
-    @NotBlank(message = "Логин не может быть пустым и содержать пробелы")
+    @NoSpace(message = "Логин не может содержать пробелы")
+    @NotBlank(message = "Логин не может быть пустым")
     private String login;
     private String name;
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
