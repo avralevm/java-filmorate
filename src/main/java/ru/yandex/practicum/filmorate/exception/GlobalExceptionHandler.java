@@ -30,6 +30,19 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ValidationException.class)
+    public Map<String, Object> handleValidationException(ValidationException ex) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", LocalDateTime.now());
+        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+        errorResponse.put("error", "Validation Error");
+        errorResponse.put("message", ex.getMessage());
+
+        log.error("[ERROR] Validation exception: {}", ex.getMessage());
+        return errorResponse;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConditionsNotMetException.class)
     public Map<String, Object> handleConditionsNotMetException(ConditionsNotMetException ex) {
         Map<String, Object> fieldErrors  = new HashMap<>();
