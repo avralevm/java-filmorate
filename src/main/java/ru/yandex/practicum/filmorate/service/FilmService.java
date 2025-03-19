@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class FilmService {
@@ -22,7 +21,6 @@ public class FilmService {
     public Film createFilm(Film film) {
         return filmStorage.createFilm(film);
     }
-
 
     public Film updateFilm(Film updateFilm) {
         return filmStorage.updateFilm(updateFilm);
