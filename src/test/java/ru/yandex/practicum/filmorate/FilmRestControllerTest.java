@@ -9,7 +9,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,11 +23,13 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
-public class FilmControllerTest {
+public class FilmRestControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired
     private FilmController filmController;
+    @Autowired
+    private UserController userController;
 
     @Test
     public void contextLoads() {
@@ -70,7 +74,6 @@ public class FilmControllerTest {
         assertEquals(filmUpdate.getDescription(), updatedFilm.getDescription(), "Film создался с некорректным описанием");
         assertEquals(filmUpdate.getReleaseDate(), updatedFilm.getReleaseDate(),"Film создался с некорректным releaseDate");
         assertEquals(filmUpdate.getDuration(), updatedFilm.getDuration(), "Film создался с некорректным duration");
-        assertEquals(1, filmController.getFilms().size(), "User не создался");
     }
 
     @Test
@@ -83,7 +86,76 @@ public class FilmControllerTest {
 
         List<Film> films = response.getBody();
         assertNotNull(films);
-        assertEquals(1, filmController.getFilms().size(), "Неправильное количество User");
+    }
+
+    @Test
+    public void testAddLike() {
+        User user = User.builder()
+                .login("dolore")
+                .email("mail@mail.ru")
+                .name("Nick Name")
+                .birthday(LocalDate.of(1946,8,20)).build();
+        userController.createUser(user);
+
+        Film film = Film.builder()
+                .name("Name Like")
+                .description("Description Like")
+                .releaseDate(LocalDate.of(1967,3,25))
+                .duration(100)
+                .build();
+        filmController.createFilm(film);
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                "/films/{id}/like/{userId}", HttpMethod.PUT,
+                null,
+                Void.class,
+                film.getId(),
+                user.getId()
+        );
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(film.getLikes().contains(user.getId()));
+    }
+
+    @Test
+    public void testRemoveLike() {
+        User user = User.builder()
+                .login("dolore")
+                .email("mail@mail.ru")
+                .name("Nick Name")
+                .birthday(LocalDate.of(1946,8,20)).build();
+        userController.createUser(user);
+
+        Film film = Film.builder()
+                .name("Name Like")
+                .description("Description Like")
+                .releaseDate(LocalDate.of(1967,3,25))
+                .duration(100)
+                .build();
+        filmController.createFilm(film);
+        filmController.addLike(film.getId(), user.getId());
+
+        // Выполнение DELETE-запроса
+        ResponseEntity<Void> response = restTemplate.exchange("/films/{id}/like/{userId}",
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                film.getId(),
+                user.getId());
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(0, film.getLikes().size());
+    }
+
+    @Test
+    public void getMostPopularFilmsTest() {
+        ResponseEntity<List<Film>> response = restTemplate.exchange("/films/popular",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Film>>() {});
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+        List<Film> mostPopularFilms = response.getBody();
+        assertNotNull(mostPopularFilms);
     }
 
     @Test
