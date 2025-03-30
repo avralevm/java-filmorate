@@ -23,6 +23,8 @@ public class Film {
     @Min(value = 1, message = "Длительность должна быть больше 0")
     private Integer duration;
     private final Set<Long> likes = new HashSet<>();
+    private final Set<Genre> genres;
+    private final Rating rating;
 
     public void addLike(Long userId) {
         likes.add(userId);
