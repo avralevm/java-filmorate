@@ -6,7 +6,6 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.annotation.MinReleaseDate;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -22,13 +21,8 @@ public class Film {
     private LocalDate releaseDate;
     @Min(value = 1, message = "Длительность должна быть больше 0")
     private Integer duration;
-    private final Set<Long> likes = new HashSet<>();
-
-    public void addLike(Long userId) {
-        likes.add(userId);
-    }
-
-    public void removeLike(Long userId) {
-        likes.remove(userId);
-    }
+    private Set<Long> likes;
+    @NotNull(message = "MPA не может быть пустым")
+    private Mpa mpa;
+    private Set<Genre> genres;
 }

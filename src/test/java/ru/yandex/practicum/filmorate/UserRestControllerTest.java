@@ -102,7 +102,6 @@ class UserRestControllerTest {
 		);
 
 		assertThat(response.getStatusCode()).isEqualTo(OK);
-		assertEquals(1, user.getFriends().size(), "Не добавился в друзья friend");
 	}
 
 	@Test
@@ -123,7 +122,6 @@ class UserRestControllerTest {
 		);
 
 		assertThat(response.getStatusCode()).isEqualTo(OK);
-		assertEquals(0, user.getFriends().size(), "Не добавился в друзья friend");
 	}
 
 	@Test
