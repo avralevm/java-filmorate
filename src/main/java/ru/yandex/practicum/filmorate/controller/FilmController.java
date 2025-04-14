@@ -30,6 +30,12 @@ public class FilmController {
         return updateFilm;
     }
 
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable long id) {
+        log.info("[GET] Запрос на получение фильма с id: {}", id);
+        return filmService.getFilmById(id);
+    }
+
     @GetMapping
     public List<Film> getFilms() {
         log.info("[GET] Запрос на получение всех фильмов");
@@ -44,7 +50,7 @@ public class FilmController {
 
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable long id, @PathVariable long userId) {
-        filmService.removeLike(userId, id);
+       filmService.removeLike(userId, id);
         log.info("[DELETE] Пользователь с ID: {} удалил лайк к фильму с ID: {}", userId, id);
     }
 

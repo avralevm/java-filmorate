@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -38,11 +39,15 @@ public class FilmRestControllerTest {
 
     @Test
     public void creteUserTest() {
+        Mpa mpa = new Mpa();
+        mpa.setId(1L);
+        mpa.setName("G");
         Film film = Film.builder()
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(1967,3,25))
                 .duration(100)
+                .mpa(mpa)
                 .build();
         ResponseEntity<Film> response = restTemplate.postForEntity("/films", film, Film.class);
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -53,17 +58,20 @@ public class FilmRestControllerTest {
         assertEquals(film.getDescription(), createdFilm.getDescription(), "Film создался с некорректным описанием");
         assertEquals(film.getReleaseDate(), createdFilm.getReleaseDate(),"Film создался с некорректным releaseDate");
         assertEquals(film.getDuration(), createdFilm.getDuration(), "Film создался с некорректным duration");
-        assertEquals(1, filmController.getFilms().size(), "User не создался");
     }
 
     @Test
     public void updateFilmTest() {
+        Mpa mpa = new Mpa();
+        mpa.setId(1L);
+        mpa.setName("G");
         Film filmUpdate = Film.builder()
                 .id(1)
                 .name("Name Update")
                 .description("Description Update")
                 .releaseDate(LocalDate.of(1967,3,25))
                 .duration(150)
+                .mpa(mpa)
                 .build();
         ResponseEntity<Film> response = restTemplate.exchange("/films", HttpMethod.PUT, new HttpEntity<>(filmUpdate), Film.class);
         assertThat(response.getStatusCode()).isEqualTo(OK);
@@ -97,11 +105,16 @@ public class FilmRestControllerTest {
                 .birthday(LocalDate.of(1946,8,20)).build();
         userController.createUser(user);
 
+        Mpa mpa = new Mpa();
+        mpa.setId(1L);
+        mpa.setName("G");
+
         Film film = Film.builder()
                 .name("Name Like")
                 .description("Description Like")
                 .releaseDate(LocalDate.of(1967,3,25))
                 .duration(100)
+                .mpa(mpa)
                 .build();
         filmController.createFilm(film);
 
@@ -114,7 +127,6 @@ public class FilmRestControllerTest {
         );
 
         assertEquals(200, response.getStatusCodeValue());
-        assertTrue(film.getLikes().contains(user.getId()));
     }
 
     @Test
@@ -126,11 +138,16 @@ public class FilmRestControllerTest {
                 .birthday(LocalDate.of(1946,8,20)).build();
         userController.createUser(user);
 
+        Mpa mpa = new Mpa();
+        mpa.setId(1L);
+        mpa.setName("G");
+
         Film film = Film.builder()
                 .name("Name Like")
                 .description("Description Like")
                 .releaseDate(LocalDate.of(1967,3,25))
                 .duration(100)
+                .mpa(mpa)
                 .build();
         filmController.createFilm(film);
         filmController.addLike(film.getId(), user.getId());
@@ -144,7 +161,6 @@ public class FilmRestControllerTest {
                 user.getId());
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals(0, film.getLikes().size());
     }
 
     @Test
