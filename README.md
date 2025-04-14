@@ -14,18 +14,18 @@
     - `description` - описание фильма
     - `release_date` - дата выхода фильма
     - `duration` - продолжительность фильма в минутах
-    - `rating_id` - идентификатор рейтинга (внешний ключ к таблице mpas)
+    - `mpa_id` - идентификатор рейтинга (внешний ключ к таблице mpas)
 
-2. **genre** — список жанров:
+2. **genres** — список жанров:
     - `genre_id` - уникальный идентификатор жанра (первичный ключ)
-    - `name` - название жанра
+    - `genre_name` - название жанра
 
 3. **film_genre** — связывает фильмы с жанрами:
     - `film_id` - идентификатор фильма (внешний ключ к таблице films)
     - `genre_id` - идентификатор жанра (внешний ключ к таблице genre)
 
-4. **mpas** — рейтинги MPA (G, PG, PG-13, R, NC-17):
-    - `rating_id` - уникальный идентификатор рейтинга (первичный ключ)
+4. **mpa** — рейтинги MPA (G, PG, PG-13, R, NC-17):
+    - `mpa_id` - уникальный идентификатор рейтинга (первичный ключ)
     - `name` - название рейтинга
 
 5. **user** — пользователи системы:
@@ -42,7 +42,6 @@
 7. **friendship** — система дружбы между пользователями с флагом подтверждения:
     - `user_id` - идентификатор пользователя (внешний ключ к таблице user)
     - `friend_id` - идентификатор друга (внешний ключ к таблице user)
-    - `status` - статус дружбы (например, "подтверждено", "ожидает подтверждения")
 
 ## Примеры SQL запросов
 ---------------------
@@ -56,17 +55,18 @@ VALUES ('email@email.com', 'login', 'Name', '2025-01-01');
 ### Добавить фильм
 ---------------------
 ```postgres-sql
-INSERT INTO films (name, description, release_date, duration, rating_id)
+INSERT INTO films (name, description, release_date, duration, mpa_id)
 VALUES ('name', 'description film', '2000-01-01', 100, 3);
 ```
 ---------------------
 ### Получить топ 10 рейтинговых фильмов
 ---------------------
 ```postgres-sql
-SELECT f.id, f.name, f.description, f.releaseDate, f.duration, COUNT(l.user_id) AS likes_count
+SELECT f.*, m.mpa_id, m.mpa_name, COUNT(l.user_id) AS likes_count
 FROM films f
+LEFT JOIN mpa AS m ON f.mpa_id = m.mpa_id
 LEFT JOIN likes l ON f.film_id = l.film_id
-GROUP BY f.film_id
+GROUP BY f.film_id, m.mpa_id, m.mpa_name
 ORDER BY likes_count DESC
 LIMIT 10;
 ```
